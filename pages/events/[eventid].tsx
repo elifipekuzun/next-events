@@ -1,27 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { getEventById } from '../../dummy-data';
-import { useRouter } from 'next/router';
-import { Event } from '../../dummy-data';
-
 import { EventSummary } from '../../components/event-detail/event-summary';
 import { EventLogistics } from '../../components/event-detail/event-logistics';
 import { EventContent } from '../../components/event-detail/event-content';
 import { Button } from '../../components/ui/button';
 import { ErrorAlert } from '../../components/ui/error-alert';
+import { NextPage, GetStaticProps, GetStaticPaths } from 'next';
+import { ParsedUrlQuery } from 'querystring';
+import { Event, getData } from '../../dummy-data';
 
-const EventDetailPage: React.FC = () => {
-  const router = useRouter();
-  const eventId = router.query.eventid;
+interface Params extends ParsedUrlQuery {
+  eventid: string;
+}
 
-  const [event, setEvent] = useState<Event>();
+interface EventProps {
+  event: Event;
+}
 
-  useEffect(() => {
-    if (eventId) {
-      const fetchedEvent = getEventById(eventId);
-      setEvent(fetchedEvent);
-    }
-  }, [eventId]);
-
+const EventDetailPage: NextPage<EventProps> = ({ event }) => {
   if (!event) {
     return (
       <>
@@ -44,6 +38,41 @@ const EventDetailPage: React.FC = () => {
       </EventContent>
     </>
   );
+};
+
+export const getStaticProps: GetStaticProps<EventProps, Params> = async (
+  content
+) => {
+  if (!content.params) {
+    return { notFound: true };
+  }
+  const eventId = content.params.eventid && content.params.eventid;
+  const data = await getData();
+  const event = data.find((e: Event) => e.id === eventId);
+  if (!event) {
+    return { notFound: true };
+  }
+  return {
+    props: {
+      event,
+    },
+    revalidate: 10,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths<Params> = async () => {
+  const data = await getData();
+  const paths = new Array(3).fill(0).map((_, i) => {
+    return {
+      params: {
+        eventid: data[i].id,
+      },
+    };
+  });
+  return {
+    paths,
+    fallback: false,
+  };
 };
 
 export default EventDetailPage;

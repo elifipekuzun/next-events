@@ -1,31 +1,25 @@
-import React, { useEffect, useState } from 'react';
 import { EventList } from '../../components/events/event-list';
-import { getFilteredEvents, Event } from '../../dummy-data';
-import { useRouter } from 'next/router';
 import { ResultsTitle } from '../../components/results-title/results-title';
 import { ErrorAlert } from '../../components/ui/error-alert';
 import { Button } from '../../components/ui/button';
+import { NextPage, GetServerSideProps } from 'next';
+import { Event, getData } from '../../dummy-data';
+import { ParsedUrlQuery } from 'querystring';
 
-const FilteredEventsPage: React.FC = () => {
-  const router = useRouter();
-  const { slug } = router.query;
+interface EventsProps {
+  filteredEvents: Event[];
+  date: string;
+}
 
-  const [events, setEvents] = useState<Event[]>([]);
-  const [date, setDate] = useState<Date>();
+interface Params extends ParsedUrlQuery {
+  slug: string[];
+}
 
-  useEffect(() => {
-    if (slug?.length) {
-      const filteredEvents = getFilteredEvents({
-        year: slug[0],
-        month: slug[1],
-      });
-      const newDate = new Date(+slug[0], +slug[1] - 1);
-      setDate(newDate);
-      filteredEvents && setEvents(filteredEvents);
-    }
-  }, []);
-
-  if (events.length === 0) {
+const FilteredEventsPage: NextPage<EventsProps> = ({
+  filteredEvents,
+  date,
+}) => {
+  if (!filteredEvents || !filteredEvents.length) {
     return (
       <>
         <ErrorAlert>
@@ -37,13 +31,48 @@ const FilteredEventsPage: React.FC = () => {
       </>
     );
   }
-
+  const formattedDate = new Date(date);
   return (
     <div>
-      {date && <ResultsTitle date={date} />}
-      <EventList items={events} />
+      {date && <ResultsTitle date={formattedDate} />}
+      <EventList items={filteredEvents} />
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<
+  EventsProps,
+  Params
+> = async (content) => {
+  if (!content.params) {
+    return { notFound: true };
+  }
+  const { slug } = content.params;
+
+  const year = slug[0];
+  const month = slug[1];
+  const parsedYear = parseInt(year);
+  const parsedMonth = parseInt(month);
+
+  if (typeof parsedYear !== 'number' && typeof parsedMonth !== 'number') {
+    return { notFound: true };
+  }
+  const data = await getData();
+  const filteredEvents = data.filter((e: Event) => {
+    const date = new Date(e.date);
+    const m = date.getMonth();
+    const y = date.getFullYear();
+    return y === parsedYear && m === parsedMonth - 1;
+  });
+  if (!filteredEvents || !filteredEvents.length) {
+    return { notFound: true };
+  }
+  return {
+    props: {
+      filteredEvents,
+      date: filteredEvents[0].date,
+    },
+  };
 };
 
 export default FilteredEventsPage;
