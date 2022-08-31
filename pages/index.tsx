@@ -1,10 +1,19 @@
-import { EventsProps, EventsApi, Event } from '../event-model';
+import { EventsProps, EventsApi } from '../event-model';
 import { EventList } from '../components/events/event-list';
 import { NextPage, GetStaticProps } from 'next';
+import Head from 'next/head';
 
 const Home: NextPage<EventsProps> = ({ events }) => {
   return (
     <div>
+      <Head>
+        <title>Nexts Events</title>
+        {/* matters for search engines to show the app */}
+        <meta
+          name="description"
+          content="Find a lot of great events that allow you to evolve..."
+        />
+      </Head>
       <EventList items={events} />
     </div>
   );

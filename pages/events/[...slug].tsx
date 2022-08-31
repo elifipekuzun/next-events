@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/button';
 import { NextPage, GetServerSideProps } from 'next';
 import { Event, getData } from '../../event-model';
 import { ParsedUrlQuery } from 'querystring';
+import Head from 'next/head';
 
 interface EventsProps {
   filteredEvents: Event[];
@@ -21,9 +22,17 @@ const FilteredEventsPage: NextPage<EventsProps> = ({
   date,
   hasError,
 }) => {
+  const headData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta name="description" content={`All events for ${date}`} />
+    </Head>
+  );
+
   if (hasError) {
     return (
       <>
+        {headData}
         <ErrorAlert>
           <p>No events found!</p>
         </ErrorAlert>
@@ -36,6 +45,7 @@ const FilteredEventsPage: NextPage<EventsProps> = ({
   const formattedDate = new Date(date);
   return (
     <div>
+      {headData}
       {date && <ResultsTitle date={formattedDate} />}
       <EventList items={filteredEvents} />
     </div>

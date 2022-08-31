@@ -1,6 +1,6 @@
 import React from 'react';
 import { Event } from '../../event-model';
-
+import Image from 'next/image';
 import styles from './event-item.module.css';
 import { Button } from '../ui/button';
 import { DateIcon } from '../icons/date-icon';
@@ -22,7 +22,7 @@ export const EventItem: React.FC<EventItemProps> = ({ item }) => {
 
   return (
     <li className={styles.item}>
-      <img src={`/${item.image}`} alt={item.title} />
+      <Image src={'/' + item.image} alt={item.title} width={250} height={160} />
       <div className={styles.content}>
         <div>
           <h2>{item.title}</h2>

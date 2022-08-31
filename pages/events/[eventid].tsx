@@ -2,10 +2,10 @@ import { EventSummary } from '../../components/event-detail/event-summary';
 import { EventLogistics } from '../../components/event-detail/event-logistics';
 import { EventContent } from '../../components/event-detail/event-content';
 import { Button } from '../../components/ui/button';
-import { ErrorAlert } from '../../components/ui/error-alert';
 import { NextPage, GetStaticProps, GetStaticPaths } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { Event, getData } from '../../event-model';
+import Head from 'next/head';
 
 interface Params extends ParsedUrlQuery {
   eventid: string;
@@ -31,6 +31,10 @@ const EventDetailPage: NextPage<EventProps> = ({ event }) => {
 
   return (
     <>
+      <Head>
+        <title>{event.title}</title>
+        <meta name="description" content={event.description} />
+      </Head>
       <EventSummary title={event.title} />
       <EventLogistics item={event} />
       <EventContent>
