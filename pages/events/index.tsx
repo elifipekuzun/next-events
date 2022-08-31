@@ -1,7 +1,7 @@
 import { NextPage, GetServerSideProps } from 'next';
 import { EventList } from '../../components/events/event-list';
 import { EventsSearch } from '../../components/events/events-search';
-import { Event, DateFilter, getData } from '../../dummy-data';
+import { Event, DateFilter, getData } from '../../event-model';
 import { useRouter } from 'next/router';
 
 interface EventsProps {

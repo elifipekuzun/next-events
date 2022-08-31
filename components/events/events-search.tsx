@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Button } from '../ui/button';
 import styles from './event-search.module.css';
-import { DateFilter } from '../../dummy-data';
+import { DateFilter } from '../../event-model';
 
 interface SearchProps {
   onSearch: (dateFilter: DateFilter) => void;

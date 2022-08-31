@@ -1,4 +1,4 @@
-import { EventsProps, EventsApi, Event } from '../dummy-data';
+import { EventsProps, EventsApi, Event } from '../event-model';
 import { EventList } from '../components/events/event-list';
 import { NextPage, GetStaticProps } from 'next';
 

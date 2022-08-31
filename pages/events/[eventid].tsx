@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/button';
 import { ErrorAlert } from '../../components/ui/error-alert';
 import { NextPage, GetStaticProps, GetStaticPaths } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import { Event, getData } from '../../dummy-data';
+import { Event, getData } from '../../event-model';
 
 interface Params extends ParsedUrlQuery {
   eventid: string;

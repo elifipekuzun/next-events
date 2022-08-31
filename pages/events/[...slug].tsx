@@ -3,7 +3,7 @@ import { ResultsTitle } from '../../components/results-title/results-title';
 import { ErrorAlert } from '../../components/ui/error-alert';
 import { Button } from '../../components/ui/button';
 import { NextPage, GetServerSideProps } from 'next';
-import { Event, getData } from '../../dummy-data';
+import { Event, getData } from '../../event-model';
 import { ParsedUrlQuery } from 'querystring';
 
 interface EventsProps {

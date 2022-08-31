@@ -1,5 +1,5 @@
 import React from 'react';
-import { Event } from '../../dummy-data';
+import { Event } from '../../event-model';
 
 import styles from './event-item.module.css';
 import { Button } from '../ui/button';

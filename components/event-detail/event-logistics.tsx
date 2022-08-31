@@ -4,7 +4,7 @@ import { AddressIcon } from '../icons/address-icon';
 import { DateIcon } from '../icons/date-icon';
 import { LogisticsItem } from './logistics-item';
 import styles from './event-logistics.module.css';
-import { Event } from '../../dummy-data';
+import { Event } from '../../event-model';
 
 type EventLogisticsProps = {
   item: Event;
