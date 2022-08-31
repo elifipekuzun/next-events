@@ -1,4 +1,4 @@
-import { NextPage, GetServerSideProps } from 'next';
+import { NextPage, GetStaticProps } from 'next';
 import { EventList } from '../../components/events/event-list';
 import { EventsSearch } from '../../components/events/events-search';
 import { Event, DateFilter, getData } from '../../event-model';
@@ -22,15 +22,15 @@ const EventsPage: NextPage<EventsProps> = ({ events }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<
-  EventsProps,
-  DateFilter
-> = async (content) => {
+export const getStaticProps: GetStaticProps<EventsProps, DateFilter> = async (
+  content
+) => {
   const data = await getData();
   return {
     props: {
       events: data,
     },
+    revalidate: 60,
   };
 };
 

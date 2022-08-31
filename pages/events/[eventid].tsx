@@ -19,9 +19,9 @@ const EventDetailPage: NextPage<EventProps> = ({ event }) => {
   if (!event) {
     return (
       <>
-        <ErrorAlert>
-          <p>No event found!</p>
-        </ErrorAlert>
+        <div className="center">
+          <p>Loading...</p>
+        </div>
         <div className="center">
           <Button href={'/events'}>Show all events</Button>
         </div>
@@ -56,22 +56,23 @@ export const getStaticProps: GetStaticProps<EventProps, Params> = async (
     props: {
       event,
     },
-    revalidate: 10,
+    revalidate: 30,
   };
 };
 
 export const getStaticPaths: GetStaticPaths<Params> = async () => {
   const data = await getData();
-  const paths = new Array(3).fill(0).map((_, i) => {
+  const featuredEvents = data.filter((e: Event) => e.isFeatured === true);
+  const paths = new Array(featuredEvents.length).fill(0).map((_, i) => {
     return {
       params: {
-        eventid: data[i].id,
+        eventid: featuredEvents[i].id,
       },
     };
   });
   return {
     paths,
-    fallback: false,
+    fallback: 'blocking',
   };
 };
 

@@ -9,6 +9,7 @@ import { ParsedUrlQuery } from 'querystring';
 interface EventsProps {
   filteredEvents: Event[];
   date: string;
+  hasError: boolean;
 }
 
 interface Params extends ParsedUrlQuery {
@@ -18,8 +19,9 @@ interface Params extends ParsedUrlQuery {
 const FilteredEventsPage: NextPage<EventsProps> = ({
   filteredEvents,
   date,
+  hasError,
 }) => {
-  if (!filteredEvents || !filteredEvents.length) {
+  if (hasError) {
     return (
       <>
         <ErrorAlert>
@@ -45,7 +47,7 @@ export const getServerSideProps: GetServerSideProps<
   Params
 > = async (content) => {
   if (!content.params) {
-    return { notFound: true };
+    return { props: { hasError: true, filteredEvents: [], date: '0' } };
   }
   const { slug } = content.params;
 
@@ -55,7 +57,7 @@ export const getServerSideProps: GetServerSideProps<
   const parsedMonth = parseInt(month);
 
   if (typeof parsedYear !== 'number' && typeof parsedMonth !== 'number') {
-    return { notFound: true };
+    return { props: { hasError: true, filteredEvents: [], date: '0' } };
   }
   const data = await getData();
   const filteredEvents = data.filter((e: Event) => {
@@ -64,13 +66,17 @@ export const getServerSideProps: GetServerSideProps<
     const y = date.getFullYear();
     return y === parsedYear && m === parsedMonth - 1;
   });
-  if (!filteredEvents || !filteredEvents.length) {
+  if (!filteredEvents) {
     return { notFound: true };
+  }
+  if (!filteredEvents.length) {
+    return { props: { hasError: true, filteredEvents: [], date: '0' } };
   }
   return {
     props: {
       filteredEvents,
       date: filteredEvents[0].date,
+      hasError: false,
     },
   };
 };
