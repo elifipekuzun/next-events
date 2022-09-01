@@ -2,6 +2,7 @@ import { EventsProps, EventsApi } from '../event-model';
 import { EventList } from '../components/events/event-list';
 import { NextPage, GetStaticProps } from 'next';
 import Head from 'next/head';
+import { NewsletterRegistration } from '../components/input/newsletter-registration';
 
 const Home: NextPage<EventsProps> = ({ events }) => {
   return (
@@ -14,6 +15,7 @@ const Home: NextPage<EventsProps> = ({ events }) => {
           content="Find a lot of great events that allow you to evolve..."
         />
       </Head>
+      <NewsletterRegistration />
       <EventList items={events} />
     </div>
   );

@@ -6,6 +6,7 @@ import { NextPage, GetStaticProps, GetStaticPaths } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { Event, getData } from '../../event-model';
 import Head from 'next/head';
+import { Comments } from '../../components/input/comments';
 
 interface Params extends ParsedUrlQuery {
   eventid: string;
@@ -40,6 +41,7 @@ const EventDetailPage: NextPage<EventProps> = ({ event }) => {
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
+      <Comments eventId={event.id} />
     </>
   );
 };
