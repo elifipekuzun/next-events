@@ -1,7 +1,8 @@
-import '../../data/db';
-import { Document } from 'mongoose';
-import { User, IUser } from '../../data/User';
+import mongoose, { Document } from 'mongoose';
+import { IUser } from '../../data/User';
 import { NextApiRequest, NextApiResponse } from 'next';
+
+const User = mongoose.model<IUser>('User');
 
 export type Data = {
   message: string;
@@ -13,10 +14,10 @@ export const fetchUsers = async (): Promise<Document<IUser>[]> => {
   return users;
 };
 
-export const addUser = async (email: string): Promise<void> => {
+export const addUser = async (email: string): Promise<void | IUser> => {
   const user = await User.findOne({ email }).exec();
   if (user) {
-    return;
+    return user;
   }
   try {
     await User.create({ email });
@@ -34,8 +35,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         .json({ message: 'Invalid email address', user: undefined });
       return;
     }
-    await addUser(email);
-    res.status(201).json({ user: { email }, message: 'Success!' });
+    const user = await addUser(email);
+    if (user) {
+      res.status(201).json({ user, message: 'Success!' });
+    } else {
+      res.status(201).json({ user: { email }, message: 'Success!' });
+    }
   }
 };
 

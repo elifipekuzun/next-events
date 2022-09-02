@@ -1,8 +1,10 @@
-import { IComment } from '../../../data/Comment';
+import '../../../data/db';
 import mongoose from 'mongoose';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { IComment } from '../../../data/Comment';
 
-const Comment = mongoose.model('Comment');
+const Comment = mongoose.model<IComment>('Comment');
+
+import { NextApiRequest, NextApiResponse } from 'next';
 
 export type Data = {
   message: string;
@@ -33,12 +35,27 @@ export const addComment = async (
 const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const eventId = req.query.eventid as string;
   if (!eventId) {
+    res.status(500).json({
+      message: 'Failed commeting to invalid event!',
+      comments: undefined,
+    });
     return;
   }
 
   if (req.method === 'POST') {
+    const { comment } = req.body as IComment;
+
+    if (
+      !comment.comment.length ||
+      !comment.userEmail.length ||
+      !comment.username.length
+    ) {
+      res
+        .status(402)
+        .json({ message: 'Please fill all the fields!', comments: undefined });
+      return;
+    }
     try {
-      const { comment } = req.body;
       await addComment(eventId, comment);
       res.status(201).json({ message: 'Success!', comments: undefined });
     } catch (error) {

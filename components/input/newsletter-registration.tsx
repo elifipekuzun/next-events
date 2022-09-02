@@ -1,11 +1,14 @@
-import React, { FormEvent, useRef, useState } from 'react';
+import React, { FormEvent, useRef, useState, useContext } from 'react';
 import styles from './newsletter-registration.module.css';
 import { Data } from '../../pages/api/signup';
+import { NotificationContext, Props } from '../../store/notification-context';
+import { Status } from '../ui/notification';
 
 export const NewsletterRegistration: React.FC = () => {
+  const { showNofification } = useContext(NotificationContext) as Props;
+
   const emailInputRef = useRef<HTMLInputElement>(null);
 
-  const [isEmailValid, setIsEmailValid] = useState(true);
   const [user, setUser] = useState<string>();
 
   const registrationHandler = (event: FormEvent) => {
@@ -13,10 +16,11 @@ export const NewsletterRegistration: React.FC = () => {
 
     const email = emailInputRef.current && emailInputRef.current.value;
 
-    if (!email || email.trim() === '' || !email.includes('@')) {
-      setIsEmailValid(false);
-      return;
-    }
+    showNofification({
+      title: 'Signing up...',
+      message: 'Registering for newsletter',
+      status: Status.pending,
+    });
 
     fetch('/api/signup', {
       method: 'POST',
@@ -29,8 +33,20 @@ export const NewsletterRegistration: React.FC = () => {
     })
       .then((res) => res.json())
       .then((data: Data) => {
+        if (data.message !== 'Success!') {
+          return showNofification({
+            title: 'Error',
+            message: data.message,
+            status: Status.error,
+          });
+        }
         if (data.user) {
           setUser(data.user.email);
+          showNofification({
+            title: 'Success!',
+            message: 'Successfully registered for newsletter.',
+            status: Status.success,
+          });
         }
       })
       .catch(console.log);

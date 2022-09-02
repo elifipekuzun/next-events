@@ -1,12 +1,16 @@
-import React, { FormEvent, useRef, useState } from 'react';
+import React, { FormEvent, useRef, useState, useContext } from 'react';
 import styles from './new-comment.module.css';
 import { IComment } from '../../data/Comment';
+import { NotificationContext, Props } from '../../store/notification-context';
+import { Status } from '../ui/notification';
 
 interface NewCommentProps {
   onAddComment(comment: IComment['comment']): any;
 }
 
 export const NewComment: React.FC<NewCommentProps> = ({ onAddComment }) => {
+  const { showNofification } = useContext(NotificationContext) as Props;
+
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
 
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +33,11 @@ export const NewComment: React.FC<NewCommentProps> = ({ onAddComment }) => {
       !comment ||
       comment.trim() === ''
     ) {
-      setIsInvalid(true);
+      showNofification({
+        title: 'Error',
+        message: 'Please enter a valid email address and comment!',
+        status: Status.error,
+      });
       return;
     }
 
@@ -52,7 +60,6 @@ export const NewComment: React.FC<NewCommentProps> = ({ onAddComment }) => {
         <label htmlFor="comment">Your comment</label>
         <textarea id="comment" rows={5} ref={commentInputRef}></textarea>
       </div>
-      {isInvalid && <p>Please enter a valid email address and comment!</p>}
       <button type="submit">Submit</button>
     </form>
   );

@@ -1,4 +1,3 @@
-import './db';
 import mongoose, { Document } from 'mongoose';
 
 export type CommentProps = {
